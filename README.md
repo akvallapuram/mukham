@@ -1,12 +1,14 @@
 # mukham
 
 Mukham (ముఖం; mook-hum) means face in Telugu! mukham is a simple library to detect the largest face in a given image.
-The face detection is performed using the DNN algorithm provided by opencv-python. The largest face is simply determined 
-by determining the box with largest enclosing area from the bounds of candidate faces detected. 
+The face detection is performed using the DNN algorithm provided by `opencv-python`. The largest face is the box with largest enclosing area from the bounds of candidate faces detected. 
 
 ### Requirements
-This package was written and tested in python 3.7+.
-You may check the required depencies in `requirements.txt` file.
+This package was written and tested in python 3.7+. This package requires the following dependencies:
+```
+    numpy>=1.18.1
+    opencv-python>=4.1.2.30
+```
 
 ### Installation
 The package can be installed as follows:
@@ -22,7 +24,7 @@ The package can be used through one of the following ways.
     python -m mukham -i/--input path/to/input_image -o/--ouput path/to/output_largest_face -c/--conf confidence_threshold
 ```
 
-the `input` argument is required. The `confidence`  is optional, otherwise must be a floating point number with default value of `0.8`.
+the `input` argument is required. The `-c/--conf`  is optional, otherwise must be a floating point number between 0 and 1 with default value of `0.8`.
 
 #### Code
 ```

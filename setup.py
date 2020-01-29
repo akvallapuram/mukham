@@ -7,8 +7,8 @@ with open("requirements.txt", "r") as fh:
     dependencies = list(map(lambda x: x.replace('==', '>='), fh.read().split('\n')))
 
 setuptools.setup(
-    name="mukham-akvallapuram", # Replace with your own username
-    version="0.0.1",
+    name="mukham",
+    version="1.0.0",
     author="Anish Krishna Vallapuram",
     author_email="akvallapuram@connect.ust.hk",
     description="A basic library to crop largest face from the images.",
