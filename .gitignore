@@ -9,4 +9,4 @@
 
 mukham-env/*
 build/*
-tests/data/*
+.vscode/*
