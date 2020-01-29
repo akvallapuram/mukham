@@ -18,20 +18,16 @@ class DimensionError(Exception):
         super(DimensionError, self).__init__(message)
 
 
-def hog_face_detector(img):
+def hog_face_detector(img: np.ndarray) -> np.ndarray:
     """
         Face detection using the HoG face detection algorithm
         from dlib library.
 
-        Parameters
-        ----------
-        img: numpy.ndarray achieved from reading an image using
-        cv2.imread()
-
+        Args:
+            img: numpy.ndarray achieved from reading an image using cv2.imread()
+       
         Returns
-        -------
-        bounding box: array of two points (x,y):
-        top left and bottom right
+            bounding box - an array of two points (x,y): top left and bottom right
     """
     detector = dlib.get_frontal_face_detector()
     faces, scores, idx = detector.run(img, 1, -1)
@@ -55,26 +51,26 @@ def hog_face_detector(img):
     return [(tl.x, tl.y), (tl.x+w, tl.y+h)]
 
 
-def dnn_face_detector(img):
+def dnn_face_detector(img: np.ndarray) -> np.ndarray:
     """
         Face detection using the DNN face detection algorithm
         from cv2 library.
 
-        Parameters
-        ----------
-        img: numpy.ndarray achieved from reading an image using
-        cv2.imread()
-
+        Args:
+            img: numpy.ndarray achieved from reading an image using cv2.imread()
+       
         Returns
-        -------
-        bounding box: array of two points (x,y):
-        top left and bottom right
+            bounding box - an array of two points (x,y): top left and bottom right
     """
     # get dimensions of image
     h, w = img.shape[:2]
 
     # detect faces using DNN algorithm from cv2
-    net = cv2.dnn.readNetFromCaffe("deploy.prototxt", "res10_300x300_ssd_iter_140000.caffemodel")
+    net = cv2.dnn.readNetFromCaffe(
+        "models/deploy.prototxt", 
+        "models/res10_300x300_ssd_iter_140000.caffemodel"
+        )
+    
     rgb_mean = np.mean(img, axis=(0, 1)) # mean rgb values to remove effects of illumination
     blob = cv2.dnn.blobFromImage(cv2.resize(img, (300,300)), 1.0, (300, 300), rgb_mean)
     net.setInput(blob)
@@ -110,22 +106,20 @@ def dnn_face_detector(img):
     return [(sx, sy), (ex, ey)]
 
 
-def haar_face_detector(img):
+def haar_face_detector(img: np.ndarray) -> np.ndarray:
     """
         Face detection using the Haar Cascades algorithm
         from cv2 library.
 
-        Parameters
-        ----------
-        img: numpy.ndarray achieved from reading an image using
-        cv2.imread()
-
+        Args:
+            img: numpy.ndarray achieved from reading an image using cv2.imread()
+       
         Returns
-        -------
-        bounding box: array of two points (x,y):
-        top left and bottom right
+            bounding box - an array of two points (x,y): top left and bottom right
     """
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(
+        'models/haarcascade_frontalface_default.xml'
+        )
 
     # Convert into grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -145,19 +139,19 @@ def haar_face_detector(img):
     return [(max_x, max_y), (max_x+max_w, max_y+max_h)]
 
 
-def detect_largest_face(in_path, out_path):
+def detect_largest_face(in_path: str, out_path: str, detector: str):
     """
-        detects the largest face for a given image using Haar
-        Cascades algorithm from cv2 library
+        detects the largest face for a given image from a choice of 
+        face detection algorithms.
 
-        Parameters
-        ----------
-        in_path: path to the input image file
-        out_path: path to save output file
-
+        Args:
+            in_path: path of the input image file
+            out_path: path of the cropped image file
+            detector: face detection algorithm to be used one of [haar, hog, dnn]
+                default: haar
+       
         Returns
-        -------
-        None
+            bounding box - an array of two points (x,y): top left and bottom right
     """
     img = cv2.imread(in_path)
     
@@ -166,9 +160,19 @@ def detect_largest_face(in_path, out_path):
     if h > 1024 or w > 1024:
         raise DimensionError(h, w)
 
-    # detect largest face
-    tl, br = hog_face_detector(img)
-    largest_face_crop = img[tl[1]:br[1], tl[0]:br[0]]
-
+    # detect largest face using the given detector
+    if detector == "hog":
+        tl, br = hog_face_detector(img)
+    
+    elif detector == "haar":
+        tl, br = haar_face_detector(img)
+    
+    elif detector == "dnn":
+        tl, br = haar_face_detector(img)
+    
+    else:
+        raise NameError(detector + " detector is not defined; choose from [haar, hog, dnn]")
+    
     # save face image to the given output path
+    largest_face_crop = img[tl[1]:br[1], tl[0]:br[0]]
     cv2.imwrite(out_path, largest_face_crop)
