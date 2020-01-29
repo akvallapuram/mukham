@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 with open("requirements.txt", "r") as fh:
-    dependencies = list(map(lambda x: x.replace('==', '>='), fh.split('\n')))
+    dependencies = list(map(lambda x: x.replace('==', '>='), fh.read().split('\n')))
 
 setuptools.setup(
     name="mukham-akvallapuram", # Replace with your own username

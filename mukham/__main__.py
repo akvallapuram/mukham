@@ -18,9 +18,5 @@ my_parser.add_argument(
 # parse arguments
 args =  my_parser.parse_args()
 
-# check input file
-if not os.path.isfile(args.input):
-    raise FileNotFoundError(args.input + ' not found!')
-
 # run
 detect_largest_face(args.input, out_path=args.output, min_conf=args.conf)

@@ -17,6 +17,16 @@ class DimensionError(Exception):
         super(DimensionError, self).__init__(message)
 
 
+class InputError(Exception):
+    """
+        raised when given image file could not read.
+    """
+    def __init__(self, file_name):
+        message = file_name + " could not be read."
+        message += " Please make sure" + file_name + " is an image."
+        super(DimensionError, self).__init__(message)
+
+
 def detect_largest_face(in_path, out_path=None, min_conf=0.8):
     """
         Detects largest face using the DNN face detection algorithm
@@ -31,7 +41,17 @@ def detect_largest_face(in_path, out_path=None, min_conf=0.8):
             bounding_box: an 2x2 array of two (x,y) coordinates 
                 for top left and bottom right of the bounding box
     """
+   
+    # check input file
+    if not os.path.isfile(in_path):
+        raise FileNotFoundError(in_path + ' not found!')
+
+    # read file
     img = cv2.imread(in_path)
+
+    # check if file is valid
+    if img is None:
+        raise InputError(in_path)
 
     # check image dimensions
     h, w = img.shape[:2]
