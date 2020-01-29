@@ -16,12 +16,6 @@ class MukhamTest(unittest.TestCase):
         if os.path.isfile('tests/data/faces/bryant_daughter.jpg'):
             os.remove('tests/data/faces/bryant_daughter.jpg')
     
-    def tearDown(self):
-        """Executed after all tests end."""
-        # remove any files created from tests. 
-        if os.path.isfile('tests/data/faces/bryant_daughter.jpg'):
-            os.remove('tests/data/faces/bryant_daughter.jpg')
-
     def test_DimensionError(self):
         """Test if DimensionError is raised"""
         from mukham.detector import DimensionError, detect_largest_face

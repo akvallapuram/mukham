@@ -34,3 +34,10 @@ the `input` argument is required. The `-c/--conf`  is optional, otherwise must b
 ```
 
 The `out_path` is an optional keyword argument default to `None`. `min_conf` is also a keyword argument with default set to `0.8`. `detect_largest_face` will return a 2x2 array of the top left and bottom right corner of the bounding box for the largest face.
+
+### Tests
+Unit tests have also been written which can run using as follows:
+```
+    cd path/to/mukham_package
+    python -m unittest tests/test.py
+```
