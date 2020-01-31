@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="mukham",
-    version="1.0.2",
+    version="1.0.4",
     author="Anish Krishna Vallapuram",
     author_email="akvallapuram@connect.ust.hk",
     description="A basic library to crop largest face from the images.",

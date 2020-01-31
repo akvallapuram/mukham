@@ -1,9 +1,11 @@
 import numpy as np
 import cv2
+import errno
 
 # set environment variable
 import os
 os.environ['OPENCV_IO_ENABLE_JASPER']= 'TRUE'   # allows JPEG2000 format
+mukham_path = os.path.split(os.path.abspath(__file__))[0]
 
 
 class DimensionError(Exception):
@@ -14,16 +16,6 @@ class DimensionError(Exception):
     def __init__(self, h, w):
         message = "Image is too big " + str((h, w))
         message += "; max allowed size is (1024, 1024)"
-        super(DimensionError, self).__init__(message)
-
-
-class InputError(Exception):
-    """
-        raised when given image file could not read.
-    """
-    def __init__(self, file_name):
-        message = file_name + " could not be read."
-        message += " Please make sure" + file_name + " is an image."
         super(DimensionError, self).__init__(message)
 
 
@@ -41,17 +33,22 @@ def detect_largest_face(in_path, out_path=None, min_conf=0.8):
             bounding_box: an 2x2 array of two (x,y) coordinates 
                 for top left and bottom right of the bounding box
     """
-   
-    # check input file
+
+    # check input file path
     if not os.path.isfile(in_path):
-        raise FileNotFoundError(in_path + ' not found!')
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), in_path)
+    
+    # check output file path
+    if out_path:
+        try:
+            with open(out_path, 'w') as f:
+                pass
+        
+        except OSError:
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), out_path)
 
     # read file
     img = cv2.imread(in_path)
-
-    # check if file is valid
-    if img is None:
-        raise InputError(in_path)
 
     # check image dimensions
     h, w = img.shape[:2]
@@ -60,10 +57,10 @@ def detect_largest_face(in_path, out_path=None, min_conf=0.8):
 
     # detect faces using DNN algorithm from cv2
     net = cv2.dnn.readNetFromCaffe(
-        "models/deploy.prototxt", 
-        "models/res10_300x300_ssd_iter_140000.caffemodel"
+        mukham_path + "/models/deploy.prototxt",
+        mukham_path + "/models/res10_300x300_ssd_iter_140000.caffemodel"
         )
-    
+
     rgb_mean = np.mean(img, axis=(0, 1)) # mean rgb values to remove effects of illumination
     blob = cv2.dnn.blobFromImage(cv2.resize(img, (300,300)), 1.0, (300, 300), rgb_mean)
     net.setInput(blob)
@@ -90,7 +87,7 @@ def detect_largest_face(in_path, out_path=None, min_conf=0.8):
     # save the crop
     if out_path:
         largest_crop = img[sy:ey, sx:ex]
-        cv2.imwrite(out_path, largest_crop)
+        saved_file = cv2.imwrite(out_path, largest_crop)
     
     # return the largest bounding box
     bounding_box = [(sx, sy), (ex, ey)]
