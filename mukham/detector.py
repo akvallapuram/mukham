@@ -5,7 +5,9 @@ import errno
 # set environment variable
 import os
 os.environ['OPENCV_IO_ENABLE_JASPER']= 'TRUE'   # allows JPEG2000 format
-mukham_path = os.path.split(os.path.abspath(__file__))[0]
+
+# path of this file
+det_path = os.path.split(os.path.abspath(__file__))[0] + '/'
 
 
 class DimensionError(Exception):
@@ -57,8 +59,8 @@ def detect_largest_face(in_path, out_path=None, min_conf=0.8):
 
     # detect faces using DNN algorithm from cv2
     net = cv2.dnn.readNetFromCaffe(
-        mukham_path + "/models/deploy.prototxt",
-        mukham_path + "/models/res10_300x300_ssd_iter_140000.caffemodel"
+        det_path + "models/deploy.prototxt",
+        det_path + "models/res10_300x300_ssd_iter_140000.caffemodel"
         )
 
     rgb_mean = np.mean(img, axis=(0, 1)) # mean rgb values to remove effects of illumination

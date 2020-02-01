@@ -1,0 +1,2 @@
+include mukham/models/*
+include mukham/tests/data/**/*

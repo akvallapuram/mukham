@@ -38,6 +38,5 @@ The `in_path` is a required argument for path to the input image. The `out_path`
 ### Tests
 Unit tests have also been written which can be run as follows:
 ```
-    cd path/to/mukham_package
-    python -m unittest tests/test.py
+    python -m unittest mukham.tests.test
 ```

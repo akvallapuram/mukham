@@ -8,14 +8,15 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="mukham",
-    version="1.0.4",
+    version="1.0.9",
     author="Anish Krishna Vallapuram",
     author_email="akvallapuram@connect.ust.hk",
     description="A basic library to crop largest face from the images.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/akvallapuram/mukham",
-    packages=['mukham'],
+    include_package_data=True,
+    packages=setuptools.find_packages(),
     install_requires=dependencies,
     classifiers=[
         "Programming Language :: Python :: 3",
